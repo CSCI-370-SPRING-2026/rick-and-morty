@@ -5,5 +5,7 @@ export async function fetchCharacters(): Promise<Character[]> {
     "https://rickandmortyapi.com/api/character"
   );
 
-  // Update the function to return an array of Character objects instead of the raw API response
+  const data = await res.json();
+  // Rick and Morty API returns { info, results }, so FlatList needs data.results.
+  return data.results as Character[];
 }

@@ -1,5 +1,6 @@
 import { Character } from "@/interfaces/interfaces";
-import { useState } from "react";
+import { toggleFavorite } from "@/storage/storage";
+import { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -8,12 +9,11 @@ import {
   TouchableOpacity,
 } from "react-native";
 
-export function RenderCharacter({ item }: { item: Character }) {
+export const RenderCharacter = ({ item }: { item: Character }) => {
     const [characters, setCharacters] = useState<Character[]>([]);
     const [fav, isFav] = useState<boolean | null>(null);
 
-
-
+    
     return (
       <View style={{ flexDirection: "row", padding: 10 }}>
         <Image
@@ -27,10 +27,10 @@ export function RenderCharacter({ item }: { item: Character }) {
         </View>
 
         <TouchableOpacity
-          onPress={() => toggleFavorite(item.id)}
+          onPress={() => toggleFavorite(item)}
         >
           <Text style={{ fontSize: 24 }}>
-            {isFavorite ? "❤️" : "🤍"}
+            {fav ? "❤️" : "🤍"}
           </Text>
         </TouchableOpacity>
       </View>
