@@ -32,3 +32,13 @@ Use this endpoint to fetch characters:
 ```bash
 npx expo install @react-native-async-storage/async-storage
 ```
+
+## Project Structure Overview
+
+The following files support API data fetching, local persistence, and UI rendering for this assignment:
+
+- root/services/api.ts: Handles requests to the Rick and Morty API and returns character data.
+- root/keys/keys.ts: Stores constants used as AsyncStorage keys.
+- root/storage/storage.ts: Contains helper functions to save/load favorites using AsyncStorage.
+- root/interfaces/interfaces.ts: Defines shared TypeScript interfaces for character and app data.
+- root/components/RenderCharacter.tsx: Reusable UI component for rendering a character item and favorite interactions.
