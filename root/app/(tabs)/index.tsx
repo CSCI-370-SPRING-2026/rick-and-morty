@@ -1,27 +1,40 @@
-import { Image } from 'expo-image';
-import { FlatList, Platform, SafeAreaView, StyleSheet } from 'react-native';
+import {
+  FlatList,
+  Platform,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+import { useEffect, useState } from "react";
+import { Character } from "@/interfaces/interfaces";
+import { fetchCharacters } from "@/services/api";
+import { RenderCharacter } from "@/components/RenderCharacter";
+
+const styles = StyleSheet.create({
+  container: { flex: 1 },
+});
 
 export default function HomeScreen() {
   // Update to fetch characters from the API and store them in state
   // Pass the characters to the FlatList and render them using the RenderCharacter component
+  const [characters, setCharacters] = useState<Character[]>([]);
+  
+  // Use useEffect to fetch characters when the component mounts
+  useEffect(() => {
+    const getCharacters = async () => {
+      const chars = await fetchCharacters();
+      setCharacters(chars);
+    };
+    getCharacters();
+  }, []);
 
   return (
-    
-    <FlatList
-      data={}
-      keyExtractor={}
-      renderItem={}
-    />
-    
+      <FlatList
+        data={characters}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => <RenderCharacter item={item} />}
+      />
   );
 }
-
-const styles = StyleSheet.create({
-  
-});
