@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { View, Text, FlatList, Image, TouchableOpacity } from "react-native";
 
 export const RenderCharacter = ({ item }: { item: Character }) => {
+  // Update this Component to use the db functions to save, store, and remove favorite Characters
+
   const [fav, setFav] = useState<boolean | null>(null);
 
   useEffect(() => {
