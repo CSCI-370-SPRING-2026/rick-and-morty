@@ -8,9 +8,24 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Fonts } from '@/constants/theme';
+import { useEffect, useState } from 'react';
+import { Character } from '@/interfaces/interfaces';
+import { getFavsFromDb } from '@/database/db';
+import { useFocusEffect } from 'expo-router';
 
 export default function TabTwoScreen() {
   // Access all characters in favorites table and display them using FlatList
+  const [favs, setFavs] = useState<Character [] | []>([]);
+
+  useFocusEffect(() => {
+    const loadFavorites = async () => {
+      const favorites = await getFavsFromDb()
+      setFavs(favorites)
+    }
+    loadFavorites()
+  })
+
+  console.log("Favs on favorites page: ", favs)
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
