@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 import { Character } from "@/interfaces/interfaces";
 import { fetchCharacters } from "@/services/api";
 import { RenderCharacter } from "@/components/RenderCharacter";
+import { initDatabase } from "@/database/db";
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
@@ -28,6 +29,8 @@ export default function HomeScreen() {
       setCharacters(chars);
     };
     getCharacters();
+    // when app starts, call and run initDB
+    initDatabase();
   }, []);
 
   return (

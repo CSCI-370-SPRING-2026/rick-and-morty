@@ -1,3 +1,4 @@
+import { addFavToDb } from "@/database/db";
 import { Character } from "@/interfaces/interfaces";
 import { checkFavorite, toggleFavorite } from "@/storage/storage";
 import { useEffect, useState } from "react";
@@ -20,6 +21,8 @@ export const RenderCharacter = ({ item }: { item: Character }) => {
     await toggleFavorite(item);
     const favorite = await checkFavorite(item);
     setFav(Boolean(favorite));
+    // add Character to DB (on Monday set up to also remove)
+    await addFavToDb(item)
   };
 
   return (
