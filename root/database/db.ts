@@ -66,3 +66,15 @@ export const getFavsFromDb = async (): Promise<Character []> => {
         return []
     }
 }
+
+// Delete character from database
+export const deleteFavFromDb = async (id: number) => {
+
+    try {
+        await db.runAsync(`DELETE FROM favorites WHERE id = ?`,
+            [id]
+        );
+    } catch (e) {
+        console.log("deleteFavFromDb Error: ", e)
+    }
+}
