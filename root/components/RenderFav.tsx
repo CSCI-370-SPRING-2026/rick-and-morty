@@ -2,6 +2,7 @@ import { Character } from "@/interfaces/interfaces";
 import React from "react";
 import { View, Pressable, StyleSheet, Image, Text } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { deleteFavFromDb } from "@/database/db";
 
 export default function RenderFav({ favorite}: { favorite: Character}) {
   return (
@@ -18,7 +19,7 @@ export default function RenderFav({ favorite}: { favorite: Character}) {
 
       {/* Trash Button */}
       <Pressable
-        onPress={() => console.log("Delete from DB")}
+        onPress={() => deleteFavFromDb(favorite.id)}
         style={styles.deleteBtn}
       >
         <Ionicons name="trash-outline" size={24} color="red" />

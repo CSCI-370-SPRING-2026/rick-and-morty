@@ -21,14 +21,19 @@ export default function TabTwoScreen() {
   // Access all characters in favorites table and display them using FlatList
   const [favs, setFavs] = useState<Character [] | []>([]);
 
-  // run every time screen is visbile
-  useFocusEffect(() => {
-    const loadFavorites = async () => {
+  const loadFavorites = async () => {
       const favorites = await getFavsFromDb()
       setFavs(favorites)
     }
+  // run every time screen is visbile
+  useFocusEffect(() => {
     loadFavorites()
   })
+
+  // create function that updates favs state after removing item
+  const updateFavsList = async () => {
+    loadFavorites()
+  }
 
   console.log("Favs on favorites page: ", favs)
 

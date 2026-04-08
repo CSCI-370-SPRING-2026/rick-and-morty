@@ -78,3 +78,21 @@ export const deleteFavFromDb = async (id: number) => {
         console.log("deleteFavFromDb Error: ", e)
     }
 }
+
+// check if char is in database or not -> return true if char is in db, false otherwise
+export const isFavoritedInDb = async (id: number) => {
+    try {
+    // if it exists in db , result should be 1, other wise 0
+    // get results from db
+    // EXISTS will return 1 or 0
+    const result = await db.getFirstAsync<{favorited: number}>(`
+        SELECT EXISTS(SELECT 1 FROM favorites WHERE id = ?) 
+        AS favorited` , [id]) 
+    // return true if result is 1
+    // return false otherwise
+    return result?.favorited === 1
+    } catch (e) {
+        console.log("isFavoritedInDb: ", e)
+    }
+
+}
