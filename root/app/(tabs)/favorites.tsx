@@ -14,6 +14,8 @@ import { getFavsFromDb } from '@/database/db';
 import { useFocusEffect } from 'expo-router';
 
 import { RenderCharacter } from '@/components/RenderCharacter';
+import RenderFav from '@/components/RenderFav';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function TabTwoScreen() {
   // Access all characters in favorites table and display them using FlatList
@@ -31,23 +33,14 @@ export default function TabTwoScreen() {
   console.log("Favs on favorites page: ", favs)
 
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
-      headerImage={
-        <IconSymbol
-          size={310}
-          color="#808080"
-          name="chevron.left.forwardslash.chevron.right"
-          style={styles.headerImage}
-        />
-      }>
-        {/* display favorite chars using flatlist */}
-        <FlatList 
+    <SafeAreaView style={{ flex: 1 }}>
+      {/* display favorite chars using flatlist */}
+      <FlatList 
         data={favs}
-        renderItem={({item}) => <RenderCharacter item={item}/>}
+        renderItem={({item}) => <RenderFav favorite={item}/>}
         keyExtractor={(item) => item.id.toString()}
-        />
-    </ParallaxScrollView>
+      />
+    </SafeAreaView>
   );
 }
 

@@ -40,7 +40,7 @@ export const RenderCharacter = ({ item }: { item: Character }) => {
         <Text>{item.species}</Text>
       </View>
 
-      <TouchableOpacity onPress={() => removeFromDB()}>
+      <TouchableOpacity onPress={() => addFavToDb(item)}>
         <Text style={{ fontSize: 24 }}>{fav ? "❤️" : "🤍"}</Text>
       </TouchableOpacity>
     </View>
