@@ -10,7 +10,7 @@ import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Fonts } from '@/constants/theme';
 import { useEffect, useState } from 'react';
 import { Character } from '@/interfaces/interfaces';
-import { getFavsFromDb } from '@/database/db';
+import { deleteFavFromDb, getFavsFromDb } from '@/database/db';
 import { useFocusEffect } from 'expo-router';
 
 import { RenderCharacter } from '@/components/RenderCharacter';
@@ -21,14 +21,30 @@ export default function TabTwoScreen() {
   // Access all characters in favorites table and display them using FlatList
   const [favs, setFavs] = useState<Character [] | []>([]);
 
-  // run every time screen is visbile
-  useFocusEffect(() => {
-    const loadFavorites = async () => {
+  const loadFavorites = async () => {
       const favorites = await getFavsFromDb()
       setFavs(favorites)
     }
+  // run every time screen is visbile
+  useFocusEffect(() => {
     loadFavorites()
   })
+
+  // create function that deletes char from fav [] and updates db
+  const handleOnDelete = async (id: number) => {
+    try {
+      // remove char with 'id' from db
+      // loadcurrent db, to update favs []
+      await deleteFavFromDb(id);
+      loadFavorites()
+    } catch (e) {
+      console.log("favorites.tsx - handleOnDelete: ", e)
+    }
+  }
+  // create function that updates favs state after removing item
+  const updateFavsList = async () => {
+    loadFavorites()
+  }
 
   console.log("Favs on favorites page: ", favs)
 
@@ -37,7 +53,7 @@ export default function TabTwoScreen() {
       {/* display favorite chars using flatlist */}
       <FlatList 
         data={favs}
-        renderItem={({item}) => <RenderFav favorite={item}/>}
+        renderItem={({item}) => <RenderFav onDelete={handleOnDelete} favorite={item}/>}
         keyExtractor={(item) => item.id.toString()}
       />
     </SafeAreaView>
