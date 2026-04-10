@@ -26,7 +26,7 @@ export const initDatabase = async () => {
             PRAGMA journal_mode = WAL;
             
             CREATE TABLE IF NOT EXISTS favorites (
-                id INTEGER PRIMARY KEY,
+                id INTEGER PRIMARY KEY UNIQUE,
                 name TEXT,
                 image TEXT,
                 species TEXT,
@@ -40,59 +40,73 @@ export const initDatabase = async () => {
 
 // Create and export function that adds a character to the favorites table
 export const addFavToDb = async (character: Character) => {
-    // try to add char to favorites
-    try {
-        await db.runAsync(
-            `INSERT INTO favorites (id, name, image, species)
+  // try to add char to favorites
+  try {
+    await db.runAsync(
+      `INSERT INTO favorites (id, name, image, species)
             VALUES (?, ?, ?, ?)`,
-            [character.id, character.name, character.image, character.species]
-        );
-    } catch (e) {
-        console.log("addFavToDb: ", e)
-    }
+      [character.id, character.name, character.image, character.species],
+    );
+  } catch (e) {
+    console.log("addFavToDb: ", e);
+  }
 };
 
-// Create and export function that reads and returns all data from the favorites table 
-export const getFavsFromDb = async (): Promise<Character []> => {
-    try {
-        // get results from db
-        const result = await db.getAllAsync<Character>(
-            `SELECT * FROM favorites
-            ORDER BY created_at DESC`
-        );
-        return result
-    } catch (e) {
-        console.log("getFavsFromDb: ", e)
-        return []
-    }
-}
+// Create and export function that reads and returns all data from the favorites table
+export const getFavsFromDb = async (): Promise<Character[]> => {
+  try {
+    // get results from db
+    const result = await db.getAllAsync<Character>(
+      `SELECT * FROM favorites
+            ORDER BY created_at DESC`,
+    );
+    return result;
+  } catch (e) {
+    console.log("getFavsFromDb: ", e);
+    return [];
+  }
+};
 
 // Delete character from database
 export const deleteFavFromDb = async (id: number) => {
-
-    try {
-        await db.runAsync(`DELETE FROM favorites WHERE id = ?`,
-            [id]
-        );
-    } catch (e) {
-        console.log("deleteFavFromDb Error: ", e)
-    }
-}
+  try {
+    await db.runAsync(`DELETE FROM favorites WHERE id = ?`, [id]);
+  } catch (e) {
+    console.log("deleteFavFromDb Error: ", e);
+  }
+};
 
 // check if char is in database or not -> return true if char is in db, false otherwise
 export const isFavoritedInDb = async (id: number) => {
-    try {
+  try {
     // if it exists in db , result should be 1, other wise 0
     // get results from db
     // EXISTS will return 1 or 0
-    const result = await db.getFirstAsync<{favorited: number}>(`
+    const result = await db.getFirstAsync<{ favorited: number }>(
+      `
         SELECT EXISTS(SELECT 1 FROM favorites WHERE id = ?) 
-        AS favorited` , [id]) 
+        AS favorited`,
+      [id],
+    );
     // return true if result is 1
     // return false otherwise
-    return result?.favorited === 1
-    } catch (e) {
-        console.log("isFavoritedInDb: ", e)
-    }
+    return result?.favorited === 1;
+  } catch (e) {
+    console.log("isFavoritedInDb: ", e);
+  }
+};
 
-}
+// Create function to update element in db
+// provide entire char we want to update
+export const updateFavInDb = async (fav: Character) => {
+  try {
+    await db.runAsync(
+      `UPDATE favorites
+        SET name = ?, species = ?, image = ?
+        WHERE id = ?`,
+      [fav.name, fav.species, fav.image, fav.id],
+    );
+  } catch (e) {
+    console.log("DB updateFavInDb: ", e);
+  }
+};
