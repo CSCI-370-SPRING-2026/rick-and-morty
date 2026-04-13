@@ -7,11 +7,12 @@ import {
   View,
 } from "react-native";
 
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { Character } from "@/interfaces/interfaces";
 import { fetchCharacters } from "@/services/api";
 import { RenderCharacter } from "@/components/RenderCharacter";
-import { initDatabase } from "@/database/db";
+import { addCharToDb, getCharsFromDb, initDatabase } from "@/database/db";
+import { useFocusEffect } from 'expo-router';
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
@@ -26,12 +27,30 @@ export default function HomeScreen() {
   useEffect(() => {
     const getCharacters = async () => {
       const chars = await fetchCharacters();
+
+      for (const char of chars) {
+        try {
+          await addCharToDb(char);
+        } catch (e) {
+          console.log("Error adding character to DB: ", e);
+        }
+      }
       setCharacters(chars);
     };
-    getCharacters();
     // when app starts, call and run initDB
     initDatabase();
+    
+    getCharacters();
+    
   }, []);
+
+  useFocusEffect(() => {
+    const loadCharacters = async () => {
+      const chars = await getCharsFromDb();
+      setCharacters(chars);
+    }
+    loadCharacters();
+  });
 
   return (
       <FlatList

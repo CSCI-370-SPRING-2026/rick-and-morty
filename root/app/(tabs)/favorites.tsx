@@ -10,7 +10,7 @@ import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Fonts } from '@/constants/theme';
 import { useEffect, useState } from 'react';
 import { Character } from '@/interfaces/interfaces';
-import { deleteFavFromDb, getFavsFromDb } from '@/database/db';
+import { deleteFavFromDb, getFavsFromDb, updateFavInDb } from '@/database/db';
 import { useFocusEffect } from 'expo-router';
 
 import { RenderCharacter } from '@/components/RenderCharacter';
@@ -42,8 +42,13 @@ export default function TabTwoScreen() {
     }
   }
   // create function that updates favs state after removing item
-  const updateFavsList = async () => {
-    loadFavorites()
+  const updateFavsList = async (fav: Character) => {
+    try {
+      await updateFavInDb(fav)
+      loadFavorites()
+    } catch (e) {
+      console.log("favorites.tsx - updateFavsList: ", e)
+    }
   }
 
   console.log("Favs on favorites page: ", favs)
@@ -53,7 +58,7 @@ export default function TabTwoScreen() {
       {/* display favorite chars using flatlist */}
       <FlatList 
         data={favs}
-        renderItem={({item}) => <RenderFav onDelete={handleOnDelete} favorite={item}/>}
+        renderItem={({item}) => <RenderFav onUpdate={updateFavsList} onDelete={handleOnDelete} favorite={item}/>}
         keyExtractor={(item) => item.id.toString()}
       />
     </SafeAreaView>

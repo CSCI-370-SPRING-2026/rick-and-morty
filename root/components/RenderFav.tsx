@@ -15,26 +15,30 @@ import { deleteFavFromDb, updateFavInDb } from "@/database/db";
 export default function RenderFav({
   favorite,
   onDelete,
+  onUpdate,
 }: {
   favorite: Character;
   onDelete: (id: number) => void;
+  onUpdate: (fav: Character) => void;
 }) {
   // establish 3 states - name , species , and editing
   const [name, setName] = useState<string>(favorite.name);
   const [species, setSpecies] = useState<string>(favorite.species);
   const [editing, setEditing] = useState<boolean>(false);
 
-  // create favorite state 
-  const [fav, setFav] = useState(favorite)
 
   // create handleSave to update db
-  const handleSave = () => {
+  const handleSave = async () => {
     console.log("handleSave called with name: ", name, " and species: ", species)
-    // try {
-    //   setFav(...favorite, name, species)
-    //   await updateFavInDb(...favorite, name, species)
-    // }
+    try {
+      onUpdate({ ...favorite, name, species });
+      setEditing(false);
+    } catch (e) {
+      console.log("RenderFav - handleSave: ", e);
+    }
   }
+
+
 
   // create pressable that allows name and species to be changed
   return (
@@ -51,8 +55,8 @@ export default function RenderFav({
       ) : (
         <View style={styles.info}>
           {/* Character Info */}
-          <Text style={styles.name}>{favorite.name}</Text>
-          <Text style={styles.species}>{favorite.species}</Text>
+          <Text style={styles.name}>{name}</Text>
+          <Text style={styles.species}>{species}</Text>
         </View>
       )}
 
