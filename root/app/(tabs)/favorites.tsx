@@ -10,7 +10,7 @@ import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Fonts } from '@/constants/theme';
 import { useEffect, useState } from 'react';
 import { Character } from '@/interfaces/interfaces';
-import { deleteFavFromDb, getFavsFromDb, updateFavInDb } from '@/database/db';
+import { deleteFavFromDb, getFavorites, updateCharacter } from '@/database/db';
 import { useFocusEffect } from 'expo-router';
 
 import { RenderCharacter } from '@/components/RenderCharacter';
@@ -22,7 +22,7 @@ export default function TabTwoScreen() {
   const [favs, setFavs] = useState<Character [] | []>([]);
 
   const loadFavorites = async () => {
-      const favorites = await getFavsFromDb()
+      const favorites = await getFavorites()
       setFavs(favorites)
     }
   // run every time screen is visbile
@@ -46,7 +46,7 @@ export default function TabTwoScreen() {
   // pass this function to the child component so it can update the parent state
   const updateFavsList = async (fav: Character) => {
     try {
-      await updateFavInDb(fav)
+      await updateCharacter(fav)
       loadFavorites()
     } catch (e) {
       console.log("favorites.tsx - updateFavsList: ", e)

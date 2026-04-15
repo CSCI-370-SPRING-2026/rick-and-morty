@@ -36,15 +36,23 @@ export const RenderCharacter = ({ item }: { item: Character }) => {
 
   const removeFromDB = async () => {
     await deleteFavFromDb(item.id)
+    
+    // use isFavoritedInDb to check if char is in fav table - should return false
+    const favorited = await isFavoritedInDb(item.id)
+
     // update inFavTable status
-    setInFavTable(false)
+    setInFavTable(favorited)
   }
 
   const addToDb = async () => {
   // add Character to DB (on Monday set up to also remove)
-    await addFavToDb(item)
+    await addFavToDb(item.id)
+    
+    // use isFavoritedInDb to check if char is in fav table - should return false
+    const favorited = await isFavoritedInDb(item.id)
+
     // update inFavTable status
-    setInFavTable(true)
+    setInFavTable(favorited)
   }
 
   console.log("inFavTable: ", item.name, inFavTable)
