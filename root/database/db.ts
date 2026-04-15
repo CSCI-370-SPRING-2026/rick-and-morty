@@ -25,12 +25,18 @@ export const initDatabase = async () => {
     await db.execAsync(`
             PRAGMA journal_mode = WAL;
             
-            CREATE TABLE IF NOT EXISTS favorites (
+            CREATE TABLE IF NOT EXISTS characters (
                 id INTEGER PRIMARY KEY UNIQUE,
                 name TEXT,
                 image TEXT,
                 species TEXT,
                 created_at TEXT DEFAULT CURRENT_TIMESTAMP
+            );
+
+            CREATE TABLE IF NOT EXISTS favorites (
+                character_id INTEGER PRIMARY KEY UNIQUE,
+                created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+                FOREGIN KEY (character_id) REFERENCE characters (id) ON DELETE CASADE
             );
         `);
   } catch (e) {
@@ -39,11 +45,11 @@ export const initDatabase = async () => {
 };
 
 // Create and export function that adds a character to the favorites table
-export const addFavToDb = async (character: Character) => {
+export const addCharToDb = async (character: Character) => {
   // try to add char to favorites
   try {
     await db.runAsync(
-      `INSERT INTO favorites (id, name, image, species)
+      `INSERT INTO characters (id, name, image, species)
             VALUES (?, ?, ?, ?)`,
       [character.id, character.name, character.image, character.species],
     );
@@ -52,12 +58,22 @@ export const addFavToDb = async (character: Character) => {
   }
 };
 
+// add char to favs database
+export const addFavToDb = async (id: number) => {
+  try {
+    await db.runAsync(`INSERT INTO favorites (character_id)
+      VALUES (?)`, [id]);
+  } catch (e) {
+    console.log("addFavToDb Error: ", e)
+  }
+}
+
 // Create and export function that reads and returns all data from the favorites table
-export const getFavsFromDb = async (): Promise<Character[]> => {
+export const getCharsFromDb = async (): Promise<Character[]> => {
   try {
     // get results from db
     const result = await db.getAllAsync<Character>(
-      `SELECT * FROM favorites
+      `SELECT * FROM characters
             ORDER BY created_at DESC`,
     );
     return result;
@@ -109,4 +125,15 @@ export const updateFavInDb = async (fav: Character) => {
   } catch (e) {
     console.log("DB updateFavInDb: ", e);
   }
+};
+
+// Create and export function that resets the database schema (for testing purposes)
+export const resetDatabaseSchema = async () => {
+  await db.execAsync(`
+    PRAGMA foreign_keys = OFF;
+    DROP TABLE IF EXISTS favorites;
+    DROP TABLE IF EXISTS characters;
+    PRAGMA foreign_keys = ON;
+`);
+  await initDatabase();
 };
