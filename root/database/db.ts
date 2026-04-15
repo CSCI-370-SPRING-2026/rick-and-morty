@@ -24,6 +24,7 @@ export const initDatabase = async () => {
     // from the db we just created, use execAsync to create new table
     await db.execAsync(`
             PRAGMA journal_mode = WAL;
+            PRAGMA foreign_keys = ON;
             
             CREATE TABLE IF NOT EXISTS characters (
                 id INTEGER PRIMARY KEY UNIQUE,
@@ -36,7 +37,7 @@ export const initDatabase = async () => {
             CREATE TABLE IF NOT EXISTS favorites (
                 character_id INTEGER PRIMARY KEY UNIQUE,
                 created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-                FOREGIN KEY (character_id) REFERENCE characters (id) ON DELETE CASADE
+                FOREIGN KEY (character_id) REFERENCES characters(id) ON DELETE CASCADE
             );
         `);
   } catch (e) {
