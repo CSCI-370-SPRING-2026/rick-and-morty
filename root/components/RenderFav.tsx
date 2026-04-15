@@ -9,7 +9,7 @@ import {
   TextInput,
 } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { deleteFavFromDb, updateFavInDb } from "@/database/db";
+import { deleteFavFromDb, updateCharacter } from "@/database/db";
 
 // provide RenderFav function that can update favs Character [] state from parent
 export default function RenderFav({

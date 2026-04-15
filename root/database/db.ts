@@ -62,12 +62,15 @@ export const addCharToDb = async (character: Character) => {
 // add char to favs database
 export const addFavToDb = async (id: number) => {
   try {
-    await db.runAsync(`INSERT INTO favorites (character_id)
-      VALUES (?)`, [id]);
+    await db.runAsync(
+      `INSERT INTO favorites (character_id)
+      VALUES (?)`,
+      [id],
+    );
   } catch (e) {
-    console.log("addFavToDb Error: ", e)
+    console.log("addFavToDb Error: ", e);
   }
-}
+};
 
 // Create and export function that reads and returns all data from the favorites table
 export const getCharsFromDb = async (): Promise<Character[]> => {
@@ -87,7 +90,7 @@ export const getCharsFromDb = async (): Promise<Character[]> => {
 // Delete character from database
 export const deleteFavFromDb = async (id: number) => {
   try {
-    await db.runAsync(`DELETE FROM favorites WHERE id = ?`, [id]);
+    await db.runAsync(`DELETE FROM favorites WHERE character_id = ?`, [id]);
   } catch (e) {
     console.log("deleteFavFromDb Error: ", e);
   }
@@ -101,7 +104,7 @@ export const isFavoritedInDb = async (id: number) => {
     // EXISTS will return 1 or 0
     const result = await db.getFirstAsync<{ favorited: number }>(
       `
-        SELECT EXISTS(SELECT 1 FROM favorites WHERE id = ?) 
+        SELECT EXISTS(SELECT 1 FROM favorites WHERE character_id = ?) 
         AS favorited`,
       [id],
     );
@@ -115,16 +118,36 @@ export const isFavoritedInDb = async (id: number) => {
 
 // Create function to update element in db
 // provide entire char we want to update
-export const updateFavInDb = async (fav: Character) => {
+export const updateCharacter = async (fav: Character) => {
   try {
     await db.runAsync(
-      `UPDATE favorites
+      `UPDATE characters
         SET name = ?, species = ?, image = ?
         WHERE id = ?`,
       [fav.name, fav.species, fav.image, fav.id],
     );
   } catch (e) {
-    console.log("DB updateFavInDb: ", e);
+    console.log("DB updateCharacter: ", e);
+  }
+};
+
+// get all items from favorites table
+export const getFavorites = async ():  Promise<Character[]> => {
+  try {
+  return await db.getAllAsync(`
+      SELECT
+       c.id,
+       c.name,
+       c.species,
+       c.image,
+       c.created_at
+       FROM favorites f
+       JOIN characters c
+       ON f.character_id = c.id
+    `);
+  } catch (e){
+    console.log("getFavorites Error: ", e)
+    return []
   }
 };
 
