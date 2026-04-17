@@ -4,3 +4,8 @@ export interface Character {
   image: string;
   species: string;
 };
+
+export interface User {
+  id: number;
+  email: string;
+}

@@ -47,9 +47,11 @@ export default function HomeScreen() {
        // update characters state based on chars returned
        setCharacters(chars)
     }
+    loadChars()
   })
 
   return (
+  
     <FlatList
       data={characters}
       keyExtractor={(item) => item.id.toString()}

@@ -10,7 +10,7 @@ Create and export function that removes a character from the favorites table
 
 Create and export function that reads and returns all data from the favorites table 
 */
-import { Character } from "@/interfaces/interfaces";
+import { Character, User } from "@/interfaces/interfaces";
 import * as SQLite from "expo-sqlite";
 
 // Create DB and export
@@ -39,11 +39,47 @@ export const initDatabase = async () => {
                 created_at TEXT DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (character_id) REFERENCES characters(id) ON DELETE CASCADE
             );
+
+            CREATE TABLE IN NOT EXISTS users (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              email TEXT UNIQUE NOT NULL,
+              password TEXT NOT NULL,
+              created_at TEXT DEFAULT CURRENT_TIMESTAMP
+            );
         `);
   } catch (e) {
     console.log("Error: ", e);
   }
 };
+
+// function to add new user 
+export const createUser = async (e: string, p: string) => {
+  try {
+    await db.runAsync(
+      `INSERT INTO users (email, password)
+      VALUES (?, ?)`,
+      [e, p]
+    )
+  } catch (e) {
+    console.log("createUser errror: ", e)
+  }
+}
+
+// create function signin that Prmosies to return User or null
+export const loginIn = async (email: string, password: string): Promise<User | null> => {
+  try {
+  const user: User | null = await db.getFirstAsync(
+  `SELECT id, email
+   FROM users
+   WHERE email = ? AND password = ?`,
+  [email, password]
+) 
+return user ?? null;
+  } catch (e) {
+    console.log("loginIn error: ", e)
+    return null
+  }
+}
 
 // Create and export function that adds a character to the favorites table
 export const addCharToDb = async (character: Character) => {
